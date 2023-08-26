@@ -1,0 +1,16 @@
+{
+  "name": "y",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "partykit dev",
+    "deploy": "partykit deploy"
+  },
+  "dependencies": {
+    "partysocket": "0.0.0-7608f89"
+  },
+  "devDependencies": {
+    "partykit": "0.0.0-7608f89",
+    "typescript": "^5.1.6"
+  }
+}
