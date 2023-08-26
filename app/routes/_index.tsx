@@ -53,7 +53,7 @@ const App = () => {
 export default function Index() {
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
-      <h1>🎈 PartyKit ⤫ Remix 💿 </h1>
+      <h1 className="text-4xl font-bold">🎈 PartyKit ⤫ Remix 💿 </h1>
       <App />
     </div>
   );

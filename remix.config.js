@@ -6,6 +6,7 @@ export default {
   serverMainFields: ["browser", "module", "main"],
   serverModuleFormat: "esm",
   serverPlatform: "neutral",
+  tailwind: true,
   future: {
     v2_dev: true,
     v2_errorBoundary: true,
