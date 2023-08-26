@@ -14,3 +14,8 @@ export type Scope = {
   updatedAt: string;
   createdAt: string;
 };
+
+export type ScopeList = {
+  global: Scope;
+  scopes: Scope[];
+};

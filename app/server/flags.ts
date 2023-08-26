@@ -6,7 +6,7 @@ import type {
   PartyServerOptions,
   PartyWorker,
 } from "partykit/server";
-import type { FlagUpdate, Flags, Scope } from "../types";
+import type { FlagUpdate, Flags, Scope, ScopeList } from "../types";
 import { trace } from "../utils";
 
 type Scopes = Record<string, Scope>;
@@ -14,12 +14,15 @@ type Scopes = Record<string, Scope>;
 const GLOBAL_SCOPE = "__global__";
 
 export default class FeatureFlags implements PartyServer {
+  party: Party;
   scopes: Scopes = {};
   options: PartyServerOptions = {
     hibernate: true,
   };
 
-  constructor(readonly party: Party) {}
+  constructor(party: Party) {
+    this.party = party;
+  }
 
   async onStart() {
     // load scopes from storage
@@ -45,7 +48,15 @@ export default class FeatureFlags implements PartyServer {
 
       if (req.headers.get("X-Scope-List")) {
         trace("Flags:get-scope-list", this.party.id);
-        return new Response(JSON.stringify(this.scopes));
+        let global: Scope = this.scopes[GLOBAL_SCOPE] ?? {};
+        let scopes: Scope[] = [];
+        for (const [key, scope] of Object.entries(this.scopes)) {
+          if (key !== GLOBAL_SCOPE) {
+            scopes.push(scope);
+          }
+        }
+
+        return new Response(JSON.stringify({ global, scopes } as ScopeList));
       }
 
       if (scopeId) {
