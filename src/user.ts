@@ -6,16 +6,16 @@ import type {
 } from "partykit/server";
 import type { Flags, FlagScope, FlagUpdate } from "./types";
 
-const getBaseId = (zoneId: string) => {
-  return zoneId.split(":")[0];
+const getBaseId = (userId: string) => {
+  return userId.split(":")[0];
 };
 
-export default class FeatureFlagZone implements PartyServer {
+export default class UserFlags implements PartyServer {
   base: Flags = {};
-  zone: Flags = {};
+  user: Flags = {};
 
   getFlags() {
-    return { ...this.base, ...this.zone };
+    return { ...this.base, ...this.user };
   }
 
   async saveFlags(scope: FlagScope, flags: Flags) {
@@ -40,7 +40,7 @@ export default class FeatureFlagZone implements PartyServer {
     }
 
     this.base = base ?? {};
-    this.zone = (await this.party.storage.get<Flags>("zone")) ?? {};
+    this.user = (await this.party.storage.get<Flags>("user")) ?? {};
   }
 
   async onRequest(req: PartyRequest) {
@@ -60,4 +60,4 @@ export default class FeatureFlagZone implements PartyServer {
   }
 }
 
-FeatureFlagZone satisfies PartyWorker;
+UserFlags satisfies PartyWorker;

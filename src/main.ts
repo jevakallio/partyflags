@@ -1,7 +1,5 @@
 import type {
   Party,
-  PartyConnection,
-  PartyConnectionContext,
   PartyLobby,
   PartyRequest,
   PartyServer,
@@ -11,31 +9,32 @@ import type { FlagUpdate, Flags } from "./types";
 
 const route = (req: PartyRequest, lobby: PartyLobby) => {
   const url = new URL(req.url);
-  const zoneId = url.searchParams.get("zone");
+  const userId = url.searchParams.get("user");
 
-  if (!zoneId) {
+  if (!userId) {
     return req;
   }
 
   // @ts-expect-error fix request type compatibility
-  return lobby.parties.zone.get(`${lobby.id}:${zoneId}`).fetch(req);
+  return lobby.parties.user.get(`${lobby.id}:${userId}`).fetch(req);
 };
 
-export default class FeatureFlag implements PartyServer {
+export default class FeatureFlags implements PartyServer {
   flags: Flags = {};
 
   constructor(readonly party: Party) {}
 
   static onBeforeRequest(req: PartyRequest, lobby: PartyLobby) {
-    // route get requests to the nearest zone
+    // route get requests to the nearest user
     if (req.method === "GET") {
       return route(req, lobby);
     }
+
     return req;
   }
 
   static onBeforeConnect(req: PartyRequest, lobby: PartyLobby) {
-    // route websocket connections to the nearest zone
+    // route websocket connections to the nearest user
     return route(req, lobby);
   }
 
@@ -48,15 +47,20 @@ export default class FeatureFlag implements PartyServer {
     // POST: update flags
     if (req.method === "POST") {
       const update = await req.json<FlagUpdate>();
-      // update flags in target zone
-      if (update.scope === "zone") {
-        const zone = this.party.context.parties.zones.get(update.zoneId);
+      // update flags in target user
+      if (update.scope === "user") {
+        const userId = `${this.party.id}:${update.userId}`;
+        const user = this.party.context.parties.user.get(userId);
         // @ts-expect-error fix request type compatibility
-        return zone.fetch(req);
+        return user.fetch({
+          ...req,
+          method: "POST",
+          body: JSON.stringify(update),
+        });
       }
 
       if (update.scope === "base") {
-        // update flags in base zone
+        // update flags in base user
         this.setFlags(update.flags);
         return new Response("OK", { status: 200 });
       }
@@ -75,4 +79,4 @@ export default class FeatureFlag implements PartyServer {
   }
 }
 
-FeatureFlag satisfies PartyWorker;
+FeatureFlags satisfies PartyWorker;

@@ -2,7 +2,7 @@
   "name": "y",
   "main": "src/main.ts",
   "parties": {
-    "zone": "src/zone.ts"
+    "user": "src/user.ts"
   },
   "serve": {
     "path": "public",

@@ -1,12 +1,12 @@
 export type Flags = Record<string, boolean | string | number>;
-export type FlagScope = "zone" | "base";
+export type FlagScope = "user" | "base";
 
 export type FlagUpdate =
   | { flags: Flags; scope: "base" }
   | {
       flags: Flags;
-      scope: "zone";
-      zoneId: string;
+      scope: "user";
+      userId: string;
     };
 
 export type FlagSyncMessage = {
