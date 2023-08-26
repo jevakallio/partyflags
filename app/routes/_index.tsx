@@ -1,6 +1,11 @@
-import type { V2_MetaFunction } from "partymix";
+import { useLoaderData } from "@remix-run/react";
+import type { DataFunctionArgs, V2_MetaFunction } from "partymix";
 import usePartySocket from "partysocket/react";
 import { useState } from "react";
+import type { Flags } from "~/types";
+
+const PARTYKIT_HOST = "localhost:1999";
+const scope = "test-room:jevakallio";
 
 export const meta: V2_MetaFunction = () => {
   return [
@@ -9,32 +14,27 @@ export const meta: V2_MetaFunction = () => {
   ];
 };
 
+export async function loader({ context }: DataFunctionArgs): Promise<Flags> {
+  return context.lobby.parties.scope
+    .get(scope)
+    .fetch({ method: "GET" })
+    .then((res) => res.json());
+}
+
 const App = () => {
-  const [messages, setMessages] = useState<string[]>([]);
-  // A PartySocket is like a WebSocket, except it's a bit more magical.
-  // It handles reconnection logic, buffering messages while it's offline, and more.
+  const serverFlags = useLoaderData<typeof loader>();
+  const [flags, setFlags] = useState<Flags>(serverFlags);
+
   usePartySocket({
-    host: "localhost:1999",
-    room: "test-room:jevakallio",
+    host: PARTYKIT_HOST,
+    room: scope,
     party: "scope",
-    onOpen() {
-      setMessages((messages) => [...messages, "Connected!"]);
-    },
     onMessage(event) {
-      setMessages((messages) => [...messages, event.data]);
-    },
-    onClose() {
-      setMessages((messages) => [...messages, "Closed!"]);
+      setFlags(JSON.parse(event.data));
     },
   });
 
-  return (
-    <ul>
-      {messages.map((message, index) => (
-        <li key={index}>{message}</li>
-      ))}
-    </ul>
-  );
+  return <pre>{JSON.stringify(flags, null, 2)}</pre>;
 };
 
 export default function Index() {

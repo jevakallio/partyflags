@@ -11,19 +11,19 @@ import type {
 
 export const api = new Hono<{ Bindings: PartyFetchLobby }>();
 
-api.get("/flags/:project", async (c) => {
+api.get("/api/flags/:project", async (c) => {
   const id = c.req.param("project");
   return c.env.parties.flags.get(id).fetch({ method: "GET" });
 });
 
-api.post("/flags/:project", async (c) => {
+api.post("/api/flags/:project", async (c) => {
   const id = c.req.param("project");
   return c.env.parties.flags
     .get(id)
     .fetch({ method: "POST", body: c.req.body });
 });
 
-api.get("/flags/:project/:scope", async (c) => {
+api.get("/api/flags/:project/:scope", async (c) => {
   return c.env.parties.flags.get(c.req.param("project")).fetch({
     method: "GET",
     headers: {
@@ -32,7 +32,7 @@ api.get("/flags/:project/:scope", async (c) => {
   });
 });
 
-api.post("/flags/:project/:scope", async (c) => {
+api.post("/api/flags/:project/:scope", async (c) => {
   return c.env.parties.flags.get(c.req.param("project")).fetch({
     method: "POST",
     body: c.req.body,
@@ -42,7 +42,7 @@ api.post("/flags/:project/:scope", async (c) => {
   });
 });
 
-api.get("/scopes/:project", async (c) => {
+api.get("/api/scopes/:project", async (c) => {
   return c.env.parties.flags.get(c.req.param("project")).fetch({
     method: "GET",
     headers: {
@@ -56,7 +56,12 @@ if (process.env.NODE_ENV === "development") {
   logDevReady(build);
 }
 
-const handleRemixRequest = createRequestHandler({ build });
+const handleRemixRequest = createRequestHandler({
+  build,
+  getLoadContext(_req, lobby, _ctx) {
+    return { lobby };
+  },
+});
 
 export default class FeatureFlagServer implements PartyServer {
   static onFetch(
@@ -64,13 +69,11 @@ export default class FeatureFlagServer implements PartyServer {
     lobby: PartyFetchLobby,
     ctx: PartyExecutionContext
   ) {
-    const url = new URL(req.url);
-    console.log(url.hostname);
-    if (url.hostname.startsWith("api/")) {
+    if (new URL(req.url).pathname.startsWith("/api")) {
       return api.fetch(req as unknown as Request, lobby, ctx);
-    } else {
-      return handleRemixRequest(req, lobby, ctx);
     }
+
+    return handleRemixRequest(req, lobby, ctx);
   }
 }
 
