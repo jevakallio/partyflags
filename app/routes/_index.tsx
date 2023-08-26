@@ -1,11 +1,9 @@
-import { useLoaderData } from "@remix-run/react";
-import type { DataFunctionArgs, V2_MetaFunction } from "partymix";
-import usePartySocket from "partysocket/react";
+import type { V2_MetaFunction } from "partymix";
 import { useState } from "react";
-import type { Flags } from "~/types";
-
-declare const PARTYKIT_HOST: string;
-const scope = "test-room:jevakallio";
+import {
+  featureFlagLoader,
+  useFeatureFlagsWithLoader,
+} from "~/hooks/useFeatureFlags";
 
 export const meta: V2_MetaFunction = () => {
   return [
@@ -14,47 +12,17 @@ export const meta: V2_MetaFunction = () => {
   ];
 };
 
-export async function loader({ request, context }: DataFunctionArgs): Promise<{
-  host: string;
-  room: string;
-  party: string;
-  initial: Flags;
-}> {
-  return {
-    host: PARTYKIT_HOST,
-    room: scope,
-    party: "scope",
-    initial: await context.lobby.parties.scope
-      .get(scope)
-      .fetch({ method: "GET" })
-      .then((res) => res.json()),
-  };
-}
-
-const useFeatureFlags = () => {
-  const { host, room, party, initial } = useLoaderData<typeof loader>();
-  const [flags, setFlags] = useState<Flags>(initial);
-  usePartySocket({
-    host,
-    room,
-    party,
-    onMessage(event) {
-      setFlags(JSON.parse(event.data));
-    },
-  });
-  return flags;
-};
-
-const App = () => {
-  const flags = useFeatureFlags();
-  return <pre>{JSON.stringify(flags, null, 2)}</pre>;
-};
+export const loader = featureFlagLoader;
 
 export default function Index() {
+  const flags = useFeatureFlagsWithLoader();
   return (
-    <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
-      <h1 className="text-4xl font-bold">🎈 PartyKit ⤫ Remix 💿 </h1>
-      <App />
-    </div>
+    <main
+      className="mx-auto max-w-4xl p-4"
+      style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}
+    >
+      <h1 className="text-4xl font-bold">Feature Flags ⛳️ </h1>
+      <pre>{JSON.stringify(flags, null, 2)}</pre>
+    </main>
   );
 }

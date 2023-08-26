@@ -1,6 +1,7 @@
 // import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import type { DataFunctionArgs } from "partymix";
+import { FeatureToggle } from "~/components/FeatureToggle";
 import type { ScopeList } from "~/types";
 
 export const loader = async ({ params, context }: DataFunctionArgs) => {
@@ -19,8 +20,20 @@ export const loader = async ({ params, context }: DataFunctionArgs) => {
 
 export default function ProjectPage() {
   const { global, scopes } = useLoaderData<typeof loader>();
+  const keys = Object.keys(global.flags);
   return (
-    <main className="mx-auto max-w-6xl">
+    <main className="mx-auto max-w-4xl p-4">
+      <div className="flex flex-col space-y-2">
+        {keys.map((key) => (
+          <FeatureToggle
+            key={key}
+            name={key}
+            value={global.flags[key]}
+            scopes={scopes}
+          />
+        ))}
+      </div>
+
       <pre>{JSON.stringify(global, null, 2)}</pre>
       <pre>{JSON.stringify(scopes, null, 2)}</pre>
     </main>

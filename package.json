@@ -11,13 +11,16 @@
     "start": "partykit dev"
   },
   "dependencies": {
+    "@radix-ui/react-select": "^1.2.2",
     "@radix-ui/react-switch": "^1.0.3",
     "@remix-run/css-bundle": "^1.19.3",
     "@remix-run/react": "^1.19.3",
+    "@types/lodash": "^4.14.197",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "hono": "^3.5.4",
     "isbot": "^3.6.13",
+    "lodash": "^4.17.21",
     "lucide-react": "^0.269.0",
     "partymix": "^0.0.0-7608f89",
     "partysocket": "0.0.0-7608f89",
