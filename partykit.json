@@ -1,8 +1,11 @@
 {
   "name": "y",
-  "main": "src/server.ts",
+  "main": "src/main.ts",
+  "parties": {
+    "zone": "src/zone.ts"
+  },
   "serve": {
     "path": "public",
-    "build": "src/client.tsx"
+    "build": "src/client/client.tsx"
   }
 }
