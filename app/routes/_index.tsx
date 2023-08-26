@@ -4,7 +4,7 @@ import usePartySocket from "partysocket/react";
 import { useState } from "react";
 import type { Flags } from "~/types";
 
-const PARTYKIT_HOST = "localhost:1999";
+declare const PARTYKIT_HOST: string;
 const scope = "test-room:jevakallio";
 
 export const meta: V2_MetaFunction = () => {
@@ -14,26 +14,39 @@ export const meta: V2_MetaFunction = () => {
   ];
 };
 
-export async function loader({ context }: DataFunctionArgs): Promise<Flags> {
-  return context.lobby.parties.scope
-    .get(scope)
-    .fetch({ method: "GET" })
-    .then((res) => res.json());
-}
-
-const App = () => {
-  const serverFlags = useLoaderData<typeof loader>();
-  const [flags, setFlags] = useState<Flags>(serverFlags);
-
-  usePartySocket({
+export async function loader({ request, context }: DataFunctionArgs): Promise<{
+  host: string;
+  room: string;
+  party: string;
+  initial: Flags;
+}> {
+  return {
     host: PARTYKIT_HOST,
     room: scope,
     party: "scope",
+    initial: await context.lobby.parties.scope
+      .get(scope)
+      .fetch({ method: "GET" })
+      .then((res) => res.json()),
+  };
+}
+
+const useFeatureFlags = () => {
+  const { host, room, party, initial } = useLoaderData<typeof loader>();
+  const [flags, setFlags] = useState<Flags>(initial);
+  usePartySocket({
+    host,
+    room,
+    party,
     onMessage(event) {
       setFlags(JSON.parse(event.data));
     },
   });
+  return flags;
+};
 
+const App = () => {
+  const flags = useFeatureFlags();
   return <pre>{JSON.stringify(flags, null, 2)}</pre>;
 };
 
