@@ -31,12 +31,14 @@ Stores the feature flags, and broadcasts changes to connected scopes.
 
 ### `scope.ts`
 
-Allows user to connect directly from a web browser uisng HTTP requests or WebSockets.
+Allows user to connect directly from a web browser using HTTP requests or WebSockets.
 
 In your application, you can create a scope for a team, user, group, or other use grouping by providing a unique identifier.
 
 - A scope party us created when a first client connects to it, which should result in PartyKit creating it in the closest Cloudflare node available in the network topology.
 - If you scope variables on a per-user basis, this should result in each party being created nearest to the user.
+
+![](docs/partyflags-scopes.png)
 
 ## Server API
 
