@@ -1,12 +1,15 @@
+import { createRequestHandler, logDevReady } from "partymix";
+import * as build from "@remix-run/dev/server-build";
 import { Hono } from "hono";
 import type {
   PartyExecutionContext,
-  PartyLobby,
   PartyRequest,
   PartyWorker,
+  PartyFetchLobby,
+  PartyServer,
 } from "partykit/server";
 
-export const api = new Hono<{ Bindings: PartyLobby }>();
+export const api = new Hono<{ Bindings: PartyFetchLobby }>();
 
 api.get("/flags/:project", async (c) => {
   const id = c.req.param("project");
@@ -48,13 +51,26 @@ api.get("/scopes/:project", async (c) => {
   });
 });
 
-export default class FeatureFlagServer {
-  static async onFetch(
+if (process.env.NODE_ENV === "development") {
+  // trigger a reload on the remix dev server
+  logDevReady(build);
+}
+
+const handleRemixRequest = createRequestHandler({ build });
+
+export default class FeatureFlagServer implements PartyServer {
+  static onFetch(
     req: PartyRequest,
-    lobby: PartyLobby,
+    lobby: PartyFetchLobby,
     ctx: PartyExecutionContext
   ) {
-    return api.fetch(req as unknown as Request, lobby, ctx);
+    const url = new URL(req.url);
+    console.log(url.hostname);
+    if (url.hostname.startsWith("api/")) {
+      return api.fetch(req as unknown as Request, lobby, ctx);
+    } else {
+      return handleRemixRequest(req, lobby, ctx);
+    }
   }
 }
 

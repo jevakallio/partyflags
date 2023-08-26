@@ -1,12 +1,13 @@
 {
   "name": "partyflags",
-  "main": "src/server/main.ts",
+  "main": "build/index.js",
   "parties": {
-    "scope": "src/server/scope.ts",
-    "flags": "src/server/flags.ts"
+    "scope": "app/server/scope.ts",
+    "flags": "app/server/flags.ts"
   },
-  "serve": {
-    "path": "public",
-    "build": "src/client/client.tsx"
+  "serve": "public",
+  "define": {
+    "process.env.REMIX_DEV_ORIGIN": "'http://127.0.0.1:8002'",
+    "process.env.REMIX_DEV_SERVER_WS_PORT": "8002"
   }
 }
