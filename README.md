@@ -2,6 +2,10 @@
 
 `partyflags` is a minimalistic feature flagging implementation using PartyKit.
 
+## OBS!
+
+This repository is currently at an experimental state. Feel free to browse through the code for learning purposes, but I would not recommend trying to run it for its intended use case just yet.
+
 ## Features
 
 - Global and scoped flags
