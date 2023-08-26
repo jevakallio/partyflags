@@ -1,5 +1,5 @@
 {
-  "name": "y",
+  "name": "partyflags",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -7,6 +7,7 @@
     "deploy": "partykit deploy"
   },
   "dependencies": {
+    "hono": "^3.5.4",
     "partysocket": "0.0.0-7608f89"
   },
   "devDependencies": {

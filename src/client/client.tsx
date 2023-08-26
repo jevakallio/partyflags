@@ -17,7 +17,8 @@ function add(text: string) {
 // It handles reconnection logic, buffering messages while it's offline, and more.
 const conn = new PartySocket({
   host: PARTYKIT_HOST,
-  room: "my-new-room",
+  room: "test-room:jevakallio",
+  party: "scope",
 });
 
 // You can even start sending messages before the connection is open!

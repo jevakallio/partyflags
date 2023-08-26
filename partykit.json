@@ -1,8 +1,9 @@
 {
-  "name": "y",
-  "main": "src/main.ts",
+  "name": "partyflags",
+  "main": "src/server/main.ts",
   "parties": {
-    "user": "src/user.ts"
+    "scope": "src/server/scope.ts",
+    "flags": "src/server/flags.ts"
   },
   "serve": {
     "path": "public",

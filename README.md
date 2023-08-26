@@ -1,11 +1,39 @@
-## 🎈 y
+# partyflags ⛳️
 
-Welcome to the party, pal!
+`partyflags` is a minimalistic feature flagging implementation using PartyKit.
 
-This is a [Partykit](https://partykit.io) project, which lets you create real-time collaborative applications with minimal coding effort.
+## Features
 
-[`server.ts`](./src/server.ts) is the server-side code, which is responsible for handling WebSocket events and HTTP requests. [`client.tsx`](./src/client.tsx) is the client-side code, which connects to the server and listens for events.
+- Global and scoped flags
+- Real-time push of updated flags
+- Distributed on edge ⚡️
 
-You can start developing by running `npm run dev` and opening [http://localhost:1999](http://localhost:1999) in your browser. When you're ready, you can deploy your application on to the PartyKit cloud with `npm run deploy`.
+### TODO
 
-Refer to our docs for more information: https://github.com/partykit/partykit/blob/main/README.md. For more help, reach out to us on [Discord](https://discord.gg/g5uqHQJc3z), [GitHub](https://github.com/partykit/partykit), or [Twitter](https://twitter.com/partykit_io).
+- Web UI
+- JavaScript client
+- React client
+- API documentation ()
+
+
+
+## Architecture
+
+`partyflags` is built entirely on PartyKit, a platform for real-time systems.
+
+The project consists of three "parties":
+
+- `main`: API server
+- `scope`: Server real-time flags
+- `flags`: Manages feature flags
+
+## Server API
+
+*  `GET  /flags/:projectId`: fetch global flags for project
+*  `GET  /flags/:projectId/:scopeId`: fetch scope flags for project
+*  `POST /flags/:projectId`: update global flags for project
+*  `POST /flags/:projectId/:scopeId`: update scope flags for project
+*  `POST /scopes/:projectId`: get all scopes with flags defined in this project
+
+
+
