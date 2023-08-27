@@ -2,7 +2,6 @@ import isString from "lodash/isString";
 import isNumber from "lodash/isNumber";
 import isNil from "lodash/isNil";
 import { useState } from "react";
-import type { Scope } from "~/types";
 import { Input } from "~/@/components/ui/input";
 import { Switch } from "~/@/components/ui/switch";
 import {
@@ -25,7 +24,7 @@ type ValueType = string | boolean | number | undefined;
 type FeatureToggleProps = {
   name: string;
   value: ValueType | undefined;
-  scopes: Scope[];
+  baseValue: ValueType | undefined;
 };
 
 const getType = (value: ValueType): FlagType => {
